@@ -14,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Builder
+@Table(name = "playlist", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+
 public class PlayList {
     @Id
     @GeneratedValue
