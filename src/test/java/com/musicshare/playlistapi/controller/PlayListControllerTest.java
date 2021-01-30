@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.transaction.Transactional;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @SpringBootTest
+@Transactional
 public class PlayListControllerTest {
 
     @Autowired
@@ -97,9 +100,7 @@ public class PlayListControllerTest {
 
         Song song1 = Song.builder().songName("Song1").build();
         Song song2 = Song.builder().songName("Song2").build();
-        playListService.createPlayListWithName("playlist1");
-        playListService.addSongsToPlayList("playlist1", song1);
-        playListService.addSongsToPlayList("playlist1", song2);
+        createPlayListWithTwoSongs("playlist1", song1, song2);
 
 
         mockMvc.perform(delete("/api/v1/playlist/song")
@@ -111,5 +112,11 @@ public class PlayListControllerTest {
                 .andExpect(jsonPath("$.songs", hasSize(1)));
 
 
+    }
+
+    private void createPlayListWithTwoSongs(String playlistName, Song song1, Song song2) {
+        playListService.createPlayListWithName(playlistName);
+        playListService.addSongsToPlayList("playlist1", song1);
+        playListService.addSongsToPlayList("playlist1", song2);
     }
 }
