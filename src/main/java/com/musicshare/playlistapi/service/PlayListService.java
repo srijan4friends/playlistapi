@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PlayListService {
@@ -21,6 +22,13 @@ public class PlayListService {
                 .songs(new ArrayList<Song>())
                 .build();
         return playListRepository.save(playList);
+    }
 
+    public PlayList addSongsToPlayList(String playListName, Song song) {
+        PlayList playList = playListRepository.findByName(playListName);
+        List<Song> songs = new ArrayList();
+        songs.add(song);
+        playList.setSongs(songs);
+        return playListRepository.save(playList);
     }
 }

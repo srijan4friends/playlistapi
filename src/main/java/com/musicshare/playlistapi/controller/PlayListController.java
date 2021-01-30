@@ -22,4 +22,9 @@ public class PlayListController {
 
         return playListService.createPlayListWithName(name);
     }
+
+    @PostMapping("/song")
+    public PlayList addSongsToPlayList(@RequestParam String playlistname, @RequestBody Song song) {
+        return playListService.addSongsToPlayList(playlistname,song);
+    }
 }
