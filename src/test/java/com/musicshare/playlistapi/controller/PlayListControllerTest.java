@@ -44,12 +44,13 @@ public class PlayListControllerTest {
      */
     @Test
     public void test_addSongsToPlaylist() throws Exception {
-        test_createPlayListWithName();
+        mockMvc.perform(post("/api/v1/playlist/{name}", "playlist1"))
+                .andExpect(status().isCreated());
+
         mockMvc.perform(post("/api/v1/playlist/song")
                 .param("playlistname","playlist1")
                 .content(objectMapper.writeValueAsString(new Song(0,"Song1"))).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(print())
                 .andExpect(jsonPath("$.name").value("playlist1"))
                 .andExpect(jsonPath("$.songs", hasSize(1)));
 

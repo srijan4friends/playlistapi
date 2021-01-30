@@ -16,5 +16,5 @@ public class Song {
     @Id
     @GeneratedValue
     private long id;
-    private String sName;
+    private String songName;
 }
