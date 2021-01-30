@@ -8,7 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -22,9 +24,10 @@ public class PlayListControllerTest {
     @Test
     public void test_createPlayListWithName() throws Exception {
 
-        mockMvc.perform(post("/api/v1/playlist/{name}","playlist1"))
-                .andExpect(status().isCreated());
-
+        mockMvc.perform(post("/api/v1/playlist/{name}", "playlist1"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("playlist1"))
+                .andExpect(jsonPath("$.songs", hasSize(0)));
 
     }
 }
