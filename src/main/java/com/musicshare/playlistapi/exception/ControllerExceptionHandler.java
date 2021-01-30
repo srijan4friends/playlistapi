@@ -19,6 +19,12 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     public void handleSongNotFoundException() {
     }
 
+    @ExceptionHandler(DuplicatePlayListException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "duplicate playlist")
+    public void handleDuplicatePlayListException() {
+    }
+
+
 }
 
 

@@ -2,6 +2,7 @@ package com.musicshare.playlistapi.controller;
 
 import com.musicshare.playlistapi.entity.PlayList;
 import com.musicshare.playlistapi.entity.Song;
+import com.musicshare.playlistapi.exception.DuplicatePlayListException;
 import com.musicshare.playlistapi.exception.IsNotFoundException;
 import com.musicshare.playlistapi.exception.NameRequiredException;
 import com.musicshare.playlistapi.service.PlayListService;
@@ -18,7 +19,7 @@ public class PlayListController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public PlayList createPlayListWithName(@RequestParam String name) throws NameRequiredException {
+    public PlayList createPlayListWithName(@RequestParam String name) throws NameRequiredException, DuplicatePlayListException {
         if (null == name || name.trim().isEmpty()) {
             throw new NameRequiredException();
         }

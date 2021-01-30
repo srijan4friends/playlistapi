@@ -2,6 +2,7 @@ package com.musicshare.playlistapi.service;
 
 import com.musicshare.playlistapi.entity.PlayList;
 import com.musicshare.playlistapi.entity.Song;
+import com.musicshare.playlistapi.exception.DuplicatePlayListException;
 import com.musicshare.playlistapi.exception.IsNotFoundException;
 import com.musicshare.playlistapi.repository.PlayListRepository;
 import com.musicshare.playlistapi.repository.SongRepository;
@@ -20,14 +21,16 @@ public class PlayListService {
     @Autowired
     SongRepository songRepository;
 
-    public PlayList createPlayListWithName(String name) {
+    public PlayList createPlayListWithName(String name) throws DuplicatePlayListException {
 
         PlayList playList = PlayList.builder()
                 .name(name)
                 .songs(new ArrayList<Song>())
                 .build();
-
-
+        PlayList playListFromDB = playListRepository.findByName(name);
+        if (playListFromDB != null){
+            throw  new DuplicatePlayListException();
+        }
         return playListRepository.save(playList);
     }
 

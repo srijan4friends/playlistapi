@@ -2,6 +2,7 @@ package com.musicshare.playlistapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musicshare.playlistapi.entity.Song;
+import com.musicshare.playlistapi.exception.DuplicatePlayListException;
 import com.musicshare.playlistapi.exception.IsNotFoundException;
 import com.musicshare.playlistapi.service.PlayListService;
 import org.junit.jupiter.api.Test;
@@ -118,7 +119,7 @@ public class PlayListControllerTest {
 
     }
 
-    private void createPlayListWithTwoSongs(String playlistName, Song song1, Song song2) throws IsNotFoundException {
+    private void createPlayListWithTwoSongs(String playlistName, Song song1, Song song2) throws IsNotFoundException, DuplicatePlayListException {
         playListService.createPlayListWithName(playlistName);
         playListService.addSongsToPlayList("playlist1", song1);
         playListService.addSongsToPlayList("playlist1", song2);
@@ -163,6 +164,23 @@ public class PlayListControllerTest {
                 .andDo(print())
                 .andExpect(jsonPath("$.name").value("playlist1"))
                 .andExpect(jsonPath("$.songs", hasSize(1)));
+    }
+
+
+
+    @Test
+    public void test_createDuplicatePlayList() throws Exception {
+
+        mockMvc.perform(post("/api/v1/playlist")
+                .param("name", "playlist1"))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/v1/playlist")
+                .param("name", "playlist1"))
+                .andExpect(status().isBadRequest())
+        .andExpect(status().reason("duplicate playlist"));
+
+
     }
 
 
