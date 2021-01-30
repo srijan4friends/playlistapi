@@ -1,8 +1,8 @@
 package com.musicshare.playlistapi.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musicshare.playlistapi.entity.Song;
+import com.musicshare.playlistapi.service.PlayListService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -27,6 +27,9 @@ public class PlayListControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    PlayListService playListService;
 
     /**
      * When a playlist is created with a name
@@ -66,6 +69,7 @@ public class PlayListControllerTest {
 
     /**
      * Add the song to the existing playlist.
+     *
      * @throws Exception
      */
     @Test
@@ -75,8 +79,8 @@ public class PlayListControllerTest {
                 .andExpect(status().isCreated());
 
         mockMvc.perform(post("/api/v1/playlist/song")
-                .param("name","playlist1")
-                .content(objectMapper.writeValueAsString(new Song(0,"Song1"))).contentType(MediaType.APPLICATION_JSON))
+                .param("name", "playlist1")
+                .content(objectMapper.writeValueAsString(new Song(0, "Song1"))).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("playlist1"))
                 .andExpect(jsonPath("$.songs", hasSize(1)));
@@ -91,12 +95,20 @@ public class PlayListControllerTest {
     @Test
     public void test_deleteSongFromPlaylist() throws Exception {
 
-        mockMvc.perform(delete("/api/v1/playlist/song")
-                .param("name","playlist1")
-                .content(objectMapper.writeValueAsString(new Song(0,"Song1")))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        Song song1 = Song.builder().songName("Song1").build();
+        Song song2 = Song.builder().songName("Song2").build();
+        playListService.createPlayListWithName("playlist1");
+        playListService.addSongsToPlayList("playlist1", song1);
+        playListService.addSongsToPlayList("playlist1", song2);
 
+
+        mockMvc.perform(delete("/api/v1/playlist/song")
+                .param("name", "playlist1")
+                .content(objectMapper.writeValueAsString(song1))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("playlist1"))
+                .andExpect(jsonPath("$.songs", hasSize(1)));
 
 
     }

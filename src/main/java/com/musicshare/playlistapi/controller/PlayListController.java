@@ -30,7 +30,8 @@ public class PlayListController {
     }
 
     @DeleteMapping("/song")
-    public void deleteSongFromPlayList(@RequestParam String name, @RequestBody Song song) {
+    public PlayList deleteSongFromPlayList(@RequestParam String name, @RequestBody Song song) {
+        return playListService.deleteSongFromPlayList(name,song);
 
     }
 }
