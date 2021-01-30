@@ -2,6 +2,7 @@ package com.musicshare.playlistapi.controller;
 
 import com.musicshare.playlistapi.entity.PlayList;
 import com.musicshare.playlistapi.entity.Song;
+import com.musicshare.playlistapi.exception.IsNotFoundException;
 import com.musicshare.playlistapi.exception.NameRequiredException;
 import com.musicshare.playlistapi.service.PlayListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,9 @@ public class PlayListController {
         return playListService.createPlayListWithName(name);
     }
 
-    @PostMapping("/song")
-    public PlayList addSongsToPlayList(@RequestParam String name, @RequestBody Song song) {
-        return playListService.addSongsToPlayList(name, song);
+    @PostMapping("{playlistName}/song")
+    public PlayList addSongsToPlayList(@PathVariable String playlistName, @RequestBody Song song) throws IsNotFoundException {
+        return playListService.addSongsToPlayList(playlistName, song);
     }
 
     @DeleteMapping("{playlistName}/song")

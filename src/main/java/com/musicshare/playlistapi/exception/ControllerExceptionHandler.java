@@ -14,6 +14,11 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     public void handleNameRequiredException() {
     }
 
+    @ExceptionHandler(IsNotFoundException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "song doesn't exist")
+    public void handleSongNotFoundException() {
+    }
+
 }
 
 
