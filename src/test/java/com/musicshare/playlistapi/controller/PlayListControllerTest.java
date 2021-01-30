@@ -103,8 +103,7 @@ public class PlayListControllerTest {
         createPlayListWithTwoSongs("playlist1", song1, song2);
 
 
-        mockMvc.perform(delete("/api/v1/playlist/song")
-                .param("name", "playlist1")
+        mockMvc.perform(delete("/api/v1/playlist/{playlistName}/song", "playlist1")
                 .content(objectMapper.writeValueAsString(song1))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
