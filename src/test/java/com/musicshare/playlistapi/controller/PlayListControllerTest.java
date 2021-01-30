@@ -86,8 +86,8 @@ public class PlayListControllerTest {
         Song song = Song.builder()
                 .songName("song1").build();
 
-        mockMvc.perform(post("/api/v1/playlist/song")
-                .param("name", "playlist1")
+        mockMvc.perform(post("/api/v1/playlist/{playlistName}/song", "playlist1")
+
                 .content(objectMapper.writeValueAsString(song)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("playlist1"))
@@ -136,6 +136,20 @@ public class PlayListControllerTest {
     public void test_addNonExistentSongToPlayList() throws Exception {
 
 
+        setupDataForNonExistentSong();
+
+        Song song = Song.builder()
+
+                .songName("noSong").build();
+        mockMvc.perform(post("/api/v1/playlist/{playlistName}/song", "playlist1")
+                .content(objectMapper.writeValueAsString(song))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(status().reason("song doesn't exist"));
+    }
+
+    private void setupDataForNonExistentSong() throws Exception {
         mockMvc.perform(post("/api/v1/playlist")
                 .param("name", "playlist1"))
                 .andExpect(status().isCreated());
@@ -143,23 +157,12 @@ public class PlayListControllerTest {
         Song song1 = Song.builder()
                 .songName("song1").build();
 
-        mockMvc.perform(post("/api/v1/playlist/song")
-                .param("name", "playlist1")
+        mockMvc.perform(post("/api/v1/playlist/{playlistName}/song", "playlist1")
                 .content(objectMapper.writeValueAsString(song1)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.name").value("playlist1"))
                 .andExpect(jsonPath("$.songs", hasSize(1)));
-
-        Song song = Song.builder()
-                .songName("noSong").build();
-        mockMvc.perform(post("/api/v1/playlist/song")
-                .param("name", "playlist1")
-                .content(objectMapper.writeValueAsString(song))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andDo(print())
-                .andExpect(status().reason("song doesn't exist"));
     }
 
 

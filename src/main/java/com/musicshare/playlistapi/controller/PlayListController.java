@@ -25,9 +25,9 @@ public class PlayListController {
         return playListService.createPlayListWithName(name);
     }
 
-    @PostMapping("/song")
-    public PlayList addSongsToPlayList(@RequestParam String name, @RequestBody Song song) throws IsNotFoundException {
-        return playListService.addSongsToPlayList(name, song);
+    @PostMapping("{playlistName}/song")
+    public PlayList addSongsToPlayList(@PathVariable String playlistName, @RequestBody Song song) throws IsNotFoundException {
+        return playListService.addSongsToPlayList(playlistName, song);
     }
 
     @DeleteMapping("{playlistName}/song")
