@@ -1,5 +1,6 @@
 package com.musicshare.playlistapi.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musicshare.playlistapi.entity.Song;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,6 +80,24 @@ public class PlayListControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("playlist1"))
                 .andExpect(jsonPath("$.songs", hasSize(1)));
+
+    }
+
+    /**
+     * Given a playlist with 2 songs
+     * When a song is removed
+     * Then the playlist has 1 song.
+     */
+    @Test
+    public void test_deleteSongFromPlaylist() throws Exception {
+
+        mockMvc.perform(delete("/api/v1/playlist/song")
+                .param("name","playlist1")
+                .content(objectMapper.writeValueAsString(new Song(0,"Song1")))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+
 
     }
 }

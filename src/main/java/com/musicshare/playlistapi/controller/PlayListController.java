@@ -28,4 +28,9 @@ public class PlayListController {
     public PlayList addSongsToPlayList(@RequestParam String name, @RequestBody Song song) {
         return playListService.addSongsToPlayList(name,song);
     }
+
+    @DeleteMapping("/song")
+    public void deleteSongFromPlayList(@RequestParam String name, @RequestBody Song song) {
+
+    }
 }
