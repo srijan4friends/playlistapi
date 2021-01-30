@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,10 +23,22 @@ public class PlayListControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
+    /**
+     * When a playlist is created with a name
+     * Then a confirmation is returned that it was successful.
+     * And the playlist is empty.
+     *
+     * @throws Exception
+     */
+
     @Test
     public void test_createPlayListWithName() throws Exception {
 
-        mockMvc.perform(post("/api/v1/playlist/{name}", "playlist1"))
+        mockMvc.perform(post("/api/v1/playlist")
+                .param("name", "playlist1"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value("playlist1"))
@@ -35,8 +46,21 @@ public class PlayListControllerTest {
 
     }
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    /**
+     * When a playlist is created without a name
+     * Then a message is returned that a name is required.
+     *
+     * @throws Exception
+     */
+
+    @Test
+    public void test_createPlayListWithoutName() throws Exception {
+
+        mockMvc.perform(post("/api/v1/playlist")
+                .param("name", ""))
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("playlist name is mandatory"));
+    }
 
     /**
      * Add the song to the existing playlist.
@@ -44,11 +68,12 @@ public class PlayListControllerTest {
      */
     @Test
     public void test_addSongsToPlaylist() throws Exception {
-        mockMvc.perform(post("/api/v1/playlist/{name}", "playlist1"))
+        mockMvc.perform(post("/api/v1/playlist")
+                .param("name", "playlist1"))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(post("/api/v1/playlist/song")
-                .param("playlistname","playlist1")
+                .param("name","playlist1")
                 .content(objectMapper.writeValueAsString(new Song(0,"Song1"))).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("playlist1"))

@@ -21,6 +21,8 @@ public class PlayListService {
                 .name(name)
                 .songs(new ArrayList<Song>())
                 .build();
+
+
         return playListRepository.save(playList);
     }
 
