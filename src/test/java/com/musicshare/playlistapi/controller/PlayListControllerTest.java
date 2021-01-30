@@ -24,6 +24,14 @@ public class PlayListControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    /**
+     * When a playlist is created with a name
+     * Then a confirmation is returned that it was successful.
+     * And the playlist is empty.
+     *
+     * @throws Exception
+     */
+
     @Test
     public void test_createPlayListWithName() throws Exception {
 
@@ -35,6 +43,13 @@ public class PlayListControllerTest {
                 .andExpect(jsonPath("$.songs", hasSize(0)));
 
     }
+
+    /**
+     * When a playlist is created without a name
+     * Then a message is returned that a name is required.
+     *
+     * @throws Exception
+     */
 
     @Test
     public void test_createPlayListWithoutName() throws Exception {

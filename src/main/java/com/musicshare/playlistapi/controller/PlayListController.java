@@ -14,8 +14,8 @@ public class PlayListController {
     @Autowired
     PlayListService playListService;
 
-    @PostMapping()
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    @ResponseStatus(value = HttpStatus.CREATED)
     public PlayList createPlayListWithName(@RequestParam String name) throws NameRequiredException {
         if (null == name || name.isEmpty()) {
             throw new NameRequiredException();
