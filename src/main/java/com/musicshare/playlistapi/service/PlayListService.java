@@ -33,4 +33,15 @@ public class PlayListService {
         playList.setSongs(songs);
         return playListRepository.save(playList);
     }
+
+    public PlayList deleteSongFromPlayList(String playListName, Song song) {
+        PlayList playList = playListRepository.findByName(playListName);
+
+        List<Song> songList = playList.getSongs();
+        songList.remove(song);
+
+        playList.setSongs(songList);
+
+        return playListRepository.save(playList);
+    }
 }

@@ -18,7 +18,7 @@ public class PlayListController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public PlayList createPlayListWithName(@RequestParam String name) throws NameRequiredException {
-        if (null == name || name.isEmpty()) {
+        if (null == name || name.trim().isEmpty()) {
             throw new NameRequiredException();
         }
         return playListService.createPlayListWithName(name);
@@ -26,6 +26,12 @@ public class PlayListController {
 
     @PostMapping("/song")
     public PlayList addSongsToPlayList(@RequestParam String name, @RequestBody Song song) {
-        return playListService.addSongsToPlayList(name,song);
+        return playListService.addSongsToPlayList(name, song);
+    }
+
+    @DeleteMapping("{playlistName}/song")
+    public PlayList deleteSongFromPlayList(@PathVariable String playlistName, @RequestBody Song song) {
+        return playListService.deleteSongFromPlayList(playlistName, song);
+
     }
 }
