@@ -37,10 +37,21 @@ public class PlayListService {
         if (songFromDb == null) {
             throw new IsNotFoundException();
         } else {
-            List<Song> songs = new ArrayList();
+            List<Song> songs = new ArrayList<>();
             songs.add(songFromDb);
             playList.setSongs(songs);
         }
+        return playListRepository.save(playList);
+    }
+
+    public PlayList deleteSongFromPlayList(String playListName, Song song) {
+        PlayList playList = playListRepository.findByName(playListName);
+
+        List<Song> songList = playList.getSongs();
+        songList.remove(song);
+
+        playList.setSongs(songList);
+
         return playListRepository.save(playList);
     }
 }

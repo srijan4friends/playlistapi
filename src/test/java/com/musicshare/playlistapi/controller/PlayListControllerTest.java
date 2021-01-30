@@ -2,6 +2,8 @@ package com.musicshare.playlistapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.musicshare.playlistapi.entity.Song;
+import com.musicshare.playlistapi.exception.IsNotFoundException;
+import com.musicshare.playlistapi.service.PlayListService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -13,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.transaction.Transactional;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -29,6 +32,9 @@ public class PlayListControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    PlayListService playListService;
 
     /**
      * When a playlist is created with a name
@@ -87,6 +93,35 @@ public class PlayListControllerTest {
                 .andExpect(jsonPath("$.name").value("playlist1"))
                 .andExpect(jsonPath("$.songs", hasSize(1)));
 
+    }
+
+    /**
+     * Given a playlist with 2 songs
+     * When a song is removed
+     * Then the playlist has 1 song.
+     */
+    @Test
+    public void test_deleteSongFromPlaylist() throws Exception {
+
+        Song song1 = Song.builder().songName("song1").build();
+        Song song2 = Song.builder().songName("song2").build();
+        createPlayListWithTwoSongs("playlist1", song1, song2);
+
+
+        mockMvc.perform(delete("/api/v1/playlist/{playlistName}/song", "playlist1")
+                .content(objectMapper.writeValueAsString(song1))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("playlist1"))
+                .andExpect(jsonPath("$.songs", hasSize(1)));
+
+
+    }
+
+    private void createPlayListWithTwoSongs(String playlistName, Song song1, Song song2) throws IsNotFoundException {
+        playListService.createPlayListWithName(playlistName);
+        playListService.addSongsToPlayList("playlist1", song1);
+        playListService.addSongsToPlayList("playlist1", song2);
     }
 
     /**
